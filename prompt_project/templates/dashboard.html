@@ -1,0 +1,462 @@
+{% extends "base.html" %}
+
+{% block content %}
+{% if current_user.role.value == 'teacher' %}
+    <div class="row mb-4">
+        <div class="col">
+            <h2>Teacher Dashboard</h2>
+            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createAssignmentModal">
+                Create Assignment
+            </button>
+        </div>
+    </div>
+
+    <div id="assignmentsList">
+        <!-- Assignments will be loaded here -->
+    </div>
+
+    <!-- View Submissions Modal -->
+    <div class="modal fade" id="viewSubmissionsModal" tabindex="-1">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Assignment Submissions</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="submissionsList">
+                        <!-- Submissions will be loaded here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Create Assignment Modal -->
+    <div class="modal fade" id="createAssignmentModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Create Assignment</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="createAssignmentForm">
+                        <div class="mb-3">
+                            <label for="title" class="form-label">Title</label>
+                            <input type="text" class="form-control" id="title" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Instructions</label>
+                            <textarea class="form-control" id="description" rows="3" required></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="dueDate" class="form-label">Due Date</label>
+                            <input type="date" class="form-control" id="dueDate" required>
+                        </div>
+                        <div id="createAssignmentError" class="alert alert-danger d-none"></div>
+                        <button type="submit" class="btn btn-primary">Create</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% else %}
+    <div class="row mb-4">
+        <div class="col">
+            <h2>Student Dashboard</h2>
+        </div>
+    </div>
+
+    <div id="studentAssignmentsList">
+        <!-- Student assignments will be loaded here -->
+    </div>
+
+    <!-- View Student Submission Modal -->
+    <div class="modal fade" id="viewSubmissionModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Your Submission</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="submissionContent">
+                        <!-- Submission content will be loaded here -->
+                    </div>
+                    <div class="mt-4">
+                        <h6>AI Help History:</h6>
+                        <div id="aiHistory" class="ai-chat">
+                            <!-- AI interactions will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- AI Help Modal -->
+    <div class="modal fade" id="aiHelpModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">AI Help</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="ai-chat mb-3" id="aiChat">
+                        <!-- Chat messages will appear here -->
+                    </div>
+                    <form id="aiHelpForm">
+                        <input type="hidden" id="currentHomeworkId">
+                        <div class="input-group">
+                            <input type="text" class="form-control" id="aiQuery" placeholder="Ask AI for help...">
+                            <button class="btn btn-primary" type="submit">Send</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Submit Assignment Modal -->
+    <div class="modal fade" id="submitAssignmentModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Submit Assignment</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="submitAssignmentForm">
+                        <input type="hidden" id="submitHomeworkId">
+                        <div class="mb-3">
+                            <label for="submissionContent" class="form-label">Your Work</label>
+                            <textarea class="form-control" id="submissionContent" rows="5" required></textarea>
+                        </div>
+                        <div id="submitError" class="alert alert-danger d-none"></div>
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endif %}
+{% endblock %}
+
+{% block scripts %}
+<script>
+$(document).ready(function() {
+    const userRole = "{{ current_user.role.value }}";
+    const assignmentsContainer = userRole === "teacher" ? "#assignmentsList" : "#studentAssignmentsList";
+
+    function showError(elementId, message) {
+        const errorDiv = $(elementId);
+        errorDiv.text(message);
+        errorDiv.removeClass('d-none');
+    }
+
+    function hideError(elementId) {
+        $(elementId).addClass('d-none');
+    }
+
+    function formatDate(dateString) {
+        const options = { year: 'numeric', month: 'long', day: 'numeric' };
+        return new Date(dateString).toLocaleDateString(undefined, options);
+    }
+
+    function loadAssignments() {
+        $.get('/assignments', function(assignments) {
+            $(assignmentsContainer).empty();
+            
+            if (assignments.length === 0) {
+                $(assignmentsContainer).append(
+                    $('<div>').addClass('alert alert-info')
+                        .text(userRole === "teacher" ? 'No assignments created yet.' : 'No assignments assigned to you yet.')
+                );
+                return;
+            }
+            
+            assignments.forEach(function(assignment) {
+                const card = $('<div>').addClass('card mb-3');
+                const cardBody = $('<div>').addClass('card-body');
+                
+                cardBody.append($('<h5>').addClass('card-title').text(assignment.title));
+                cardBody.append($('<p>').addClass('card-text').text(assignment.description));
+                cardBody.append(
+                    $('<p>').addClass('card-text')
+                        .append($('<small>').addClass('text-muted')
+                            .text('Due: ' + formatDate(assignment.duedate)))
+                );
+                
+                if (userRole === "teacher") {
+                    const btnGroup = $('<div>').addClass('btn-group');
+                    btnGroup.append(
+                        $('<button>')
+                            .addClass('btn btn-info')
+                            .text('View Submissions')
+                            .click(function() {
+                                loadSubmissions(assignment.id, assignment.title);
+                            })
+                    );
+                    cardBody.append(btnGroup);
+                } else if (userRole === "student") {
+                    const btnGroup = $('<div>').addClass('btn-group');
+                    
+                    // Add status badge
+                    btnGroup.append(
+                        $('<span>')
+                            .addClass(`badge bg-${assignment.status === 'Submitted' ? 'success' : 'warning'} me-2`)
+                            .text(assignment.status || 'Pending')
+                    );
+                    
+                    if (assignment.status === 'Submitted') {
+                        // View submission button
+                        btnGroup.append(
+                            $('<button>')
+                                .addClass('btn btn-info me-2')
+                                .text('View Submission')
+                                .click(function() {
+                                    loadStudentSubmission(assignment.id);
+                                })
+                        );
+                    } else {
+                        // AI Help button
+                        btnGroup.append(
+                            $('<button>')
+                                .addClass('btn btn-primary me-2')
+                                .text('Get AI Help')
+                                .click(function() {
+                                    $('#currentHomeworkId').val(assignment.id);
+                                    $('#aiHelpModal').modal('show');
+                                })
+                        );
+                        
+                        // Submit button
+                        btnGroup.append(
+                            $('<button>')
+                                .addClass('btn btn-success')
+                                .text('Submit')
+                                .click(function() {
+                                    $('#submitHomeworkId').val(assignment.id);
+                                    $('#submitAssignmentModal').modal('show');
+                                })
+                        );
+                    }
+                    cardBody.append(btnGroup);
+                }
+                
+                card.append(cardBody);
+                $(assignmentsContainer).append(card);
+            });
+        }).fail(function(xhr) {
+            $(assignmentsContainer).html(
+                $('<div>').addClass('alert alert-danger')
+                    .text('Failed to load assignments. Please try again later.')
+                );
+        });
+    }
+
+    function loadSubmissions(homeworkId, title) {
+        $('#viewSubmissionsModal').modal('show');
+        $('#viewSubmissionsModal .modal-title').text(`Submissions for: ${title}`);
+        
+        $.get(`/submissions/${homeworkId}`, function(submissions) {
+            const submissionsList = $('#submissionsList').empty();
+            
+            if (submissions.length === 0) {
+                submissionsList.append(
+                    $('<div>').addClass('alert alert-info')
+                        .text('No submissions yet.')
+                );
+                return;
+            }
+            
+            submissions.forEach(function(submission) {
+                const submissionCard = $('<div>').addClass('card mb-3');
+                const cardBody = $('<div>').addClass('card-body');
+                
+                // Student info and status
+                cardBody.append($('<h5>').addClass('card-title')
+                    .text(`Student: ${submission.student_name}`));
+                cardBody.append($('<p>').addClass('card-text')
+                    .append($('<span>')
+                        .addClass(`badge bg-${submission.status === 'Submitted' ? 'success' : 'warning'}`)
+                        .text(submission.status)));
+                
+                if (submission.submission_date) {
+                    cardBody.append($('<p>').addClass('card-text')
+                        .append($('<small>').addClass('text-muted')
+                            .text(`Submitted: ${submission.submission_date}`)));
+                }
+                
+                // Submission content
+                if (submission.content) {
+                    cardBody.append($('<div>').addClass('mb-3')
+                        .append($('<h6>').text('Submission:'))
+                        .append($('<pre>').addClass('bg-light p-3 rounded')
+                            .text(submission.content)));
+                }
+                
+                // AI Interactions
+                if (submission.ai_interactions.length > 0) {
+                    const aiSection = $('<div>').addClass('mt-3');
+                    aiSection.append($('<h6>').text('AI Interactions:'));
+                    
+                    const aiList = $('<div>').addClass('ai-interactions ms-3');
+                    submission.ai_interactions.forEach(function(interaction) {
+                        aiList.append($('<div>').addClass('mb-2')
+                            .append($('<p>').addClass('mb-1 text-primary').text(`Q: ${interaction.query}`))
+                            .append($('<p>').addClass('mb-1 text-success').text(`A: ${interaction.response}`))
+                            .append($('<small>').addClass('text-muted')
+                                .text(`Time: ${interaction.timestamp}`)));
+                    });
+                    aiSection.append(aiList);
+                    cardBody.append(aiSection);
+                }
+                
+                submissionCard.append(cardBody);
+                submissionsList.append(submissionCard);
+            });
+        }).fail(function(xhr) {
+            $('#submissionsList').html(
+                $('<div>').addClass('alert alert-danger')
+                    .text('Failed to load submissions. Please try again later.')
+            );
+        });
+    }
+
+    function loadStudentSubmission(homeworkId) {
+        $('#viewSubmissionModal').modal('show');
+        
+        $.get(`/student-submission/${homeworkId}`, function(data) {
+            const submissionContent = $('#submissionContent').empty();
+            const aiHistory = $('#aiHistory').empty();
+            
+            // Show submission content
+            if (data.submission) {
+                submissionContent.append(
+                    $('<div>').addClass('mb-3')
+                        .append($('<h6>').text('Your Work:'))
+                        .append($('<pre>').addClass('bg-light p-3 rounded')
+                            .text(data.submission.content))
+                        .append($('<small>').addClass('text-muted')
+                            .text(`Submitted on: ${formatDate(data.submission.date)}`))
+                );
+            }
+            
+            // Show AI interactions
+            if (data.ai_interactions && data.ai_interactions.length > 0) {
+                data.ai_interactions.forEach(function(interaction) {
+                    aiHistory.append(
+                        $('<div>').addClass('mb-2')
+                            .append($('<p>').addClass('text-primary mb-1').text(`Q: ${interaction.query}`))
+                            .append($('<p>').addClass('text-success mb-1').text(`A: ${interaction.response}`))
+                            .append($('<small>').addClass('text-muted').text(interaction.timestamp))
+                    );
+                });
+            } else {
+                aiHistory.append($('<p>').text('No AI interactions for this assignment.'));
+            }
+        }).fail(function(xhr) {
+            $('#submissionContent').html(
+                $('<div>').addClass('alert alert-danger')
+                    .text('Failed to load submission. Please try again later.')
+            );
+        });
+    }
+
+    loadAssignments();
+
+    if (userRole === "teacher") {
+        $('#createAssignmentForm').on('submit', function(e) {
+            e.preventDefault();
+            hideError('#createAssignmentError');
+            
+            $.ajax({
+                url: '/assignments',
+                method: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    title: $('#title').val(),
+                    description: $('#description').val(),
+                    duedate: $('#dueDate').val()
+                }),
+                success: function(response) {
+                    $('#createAssignmentModal').modal('hide');
+                    $('#createAssignmentForm')[0].reset();
+                    loadAssignments();
+                },
+                error: function(xhr) {
+                    showError('#createAssignmentError', 
+                        xhr.responseJSON?.error || 'Failed to create assignment. Please try again.');
+                }
+            });
+        });
+    } else {
+        $('#aiHelpForm').on('submit', function(e) {
+            e.preventDefault();
+            const query = $('#aiQuery').val();
+            const homeworkId = $('#currentHomeworkId').val();
+            
+            // Disable form while processing
+            const submitButton = $(this).find('button[type="submit"]');
+            const originalButtonText = submitButton.text();
+            submitButton.prop('disabled', true).text('Processing...');
+            
+            $.ajax({
+                url: '/ai-help',
+                method: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    studenthomeworkid: homeworkId,
+                    query: query
+                }),
+                success: function(response) {
+                    const chatDiv = $('#aiChat');
+                    chatDiv.append($('<div>').addClass('mb-3')
+                        .append($('<p>').addClass('text-primary mb-1').text('You: ' + query))
+                        .append($('<p>').addClass('text-success mb-1').text('AI: ' + response.response))
+                    );
+                    chatDiv.scrollTop(chatDiv[0].scrollHeight);
+                    $('#aiQuery').val('');
+                },
+                error: function(xhr) {
+                    const errorMsg = xhr.responseJSON?.error || 'Failed to get AI help. Please try again.';
+                    const details = xhr.responseJSON?.details ? `\nDetails: ${xhr.responseJSON.details}` : '';
+                    alert(errorMsg + details);
+                },
+                complete: function() {
+                    submitButton.prop('disabled', false).text(originalButtonText);
+                }
+            });
+        });
+
+        $('#submitAssignmentForm').on('submit', function(e) {
+            e.preventDefault();
+            hideError('#submitError');
+            
+            $.ajax({
+                url: '/submit',
+                method: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    studenthomeworkid: $('#submitHomeworkId').val(),
+                    content: $('#submissionContent').val()
+                }),
+                success: function(response) {
+                    $('#submitAssignmentModal').modal('hide');
+                    $('#submitAssignmentForm')[0].reset();
+                    loadAssignments();
+                    alert('Assignment submitted successfully!');
+                },
+                error: function(xhr) {
+                    showError('#submitError', 
+                        xhr.responseJSON?.error || 'Failed to submit assignment. Please try again.');
+                }
+            });
+        });
+    }
+});
+</script>
+{% endblock %} 
