@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="app.diagrams.net" modified="2024-03-20T12:00:00.000Z" agent="Mozilla/5.0" version="21.1.9" type="device">
+  <diagram id="homework_platform_er" name="Homework Platform ER Diagram">
+    <mxGraphModel dx="1422" dy="791" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+        
+        <!-- Users Entity -->
+        <mxCell id="2" value="Users" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="40" y="40" width="160" height="180" as="geometry"/>
+        </mxCell>
+        <mxCell id="3" value="+ userid (PK)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;" vertex="1" parent="2">
+          <mxGeometry y="30" width="160" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="4" value="+ name" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;" vertex="1" parent="2">
+          <mxGeometry y="60" width="160" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="5" value="+ email (unique)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;" vertex="1" parent="2">
+          <mxGeometry y="90" width="160" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="6" value="+ passwordhash" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;" vertex="1" parent="2">
+          <mxGeometry y="120" width="160" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="7" value="+ role (enum)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;" vertex="1" parent="2">
+          <mxGeometry y="150" width="160" height="30" as="geometry"/>
+        </mxCell>
+
+        <!-- Homework Entity -->
+        <mxCell id="8" value="Homework" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="320" y="40" width="160" height="180" as="geometry"/>
+        </mxCell>
+        <mxCell id="9" value="+ homeworkid (PK)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;" vertex="1" parent="8">
+          <mxGeometry y="30" width="160" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="10" value="+ teacherid (FK)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;" vertex="1" parent="8">
+          <mxGeometry y="60" width="160" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="11" value="+ title" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;" vertex="1" parent="8">
+          <mxGeometry y="90" width="160" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="12" value="+ description" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;" vertex="1" parent="8">
+          <mxGeometry y="120" width="160" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="13" value="+ duedate" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;" vertex="1" parent="8">
+          <mxGeometry y="150" width="160" height="30" as="geometry"/>
+        </mxCell>
+
+        <!-- StudentHomework Entity -->
+        <mxCell id="14" value="StudentHomework" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="320" y="280" width="160" height="210" as="geometry"/>
+        </mxCell>
+        <mxCell id="15" value="+ studenthomeworkid (PK)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;" vertex="1" parent="14">
+          <mxGeometry y="30" width="160" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="16" value="+ homeworkid (FK)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;" vertex="1" parent="14">
+          <mxGeometry y="60" width="160" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="17" value="+ studentid (FK)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;" vertex="1" parent="14">
+          <mxGeometry y="90" width="160" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="18" value="+ status" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;" vertex="1" parent="14">
+          <mxGeometry y="120" width="160" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="19" value="+ submissiondate" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;" vertex="1" parent="14">
+          <mxGeometry y="150" width="160" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="20" value="+ grade" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;" vertex="1" parent="14">
+          <mxGeometry y="180" width="160" height="30" as="geometry"/>
+        </mxCell>
+
+        <!-- Submissions Entity -->
+        <mxCell id="21" value="Submissions" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="600" y="280" width="160" height="150" as="geometry"/>
+        </mxCell>
+        <mxCell id="22" value="+ submissionid (PK)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;" vertex="1" parent="21">
+          <mxGeometry y="30" width="160" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="23" value="+ studenthomeworkid (FK)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;" vertex="1" parent="21">
+          <mxGeometry y="60" width="160" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="24" value="+ submissioncontent" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;" vertex="1" parent="21">
+          <mxGeometry y="90" width="160" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="25" value="+ submissiontimestamp" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;" vertex="1" parent="21">
+          <mxGeometry y="120" width="160" height="30" as="geometry"/>
+        </mxCell>
+
+        <!-- AIInteractions Entity -->
+        <mxCell id="26" value="AIInteractions" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="1">
+          <mxGeometry x="40" y="280" width="160" height="150" as="geometry"/>
+        </mxCell>
+        <mxCell id="27" value="+ interactionid (PK)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;" vertex="1" parent="26">
+          <mxGeometry y="30" width="160" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="28" value="+ studenthomeworkid (FK)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;" vertex="1" parent="26">
+          <mxGeometry y="60" width="160" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="29" value="+ interactiontext" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;" vertex="1" parent="26">
+          <mxGeometry y="90" width="160" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="30" value="+ airesponsetext" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;" vertex="1" parent="26">
+          <mxGeometry y="120" width="160" height="30" as="geometry"/>
+        </mxCell>
+
+        <!-- Relationships -->
+        <!-- Users (Teacher) to Homework -->
+        <mxCell id="31" value="" style="edgeStyle=entityRelationEdgeStyle;fontSize=12;html=1;endArrow=ERoneToMany;startArrow=ERmandOne;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="3" target="10">
+          <mxGeometry width="100" height="100" relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Users (Student) to StudentHomework -->
+        <mxCell id="32" value="" style="edgeStyle=entityRelationEdgeStyle;fontSize=12;html=1;endArrow=ERoneToMany;startArrow=ERmandOne;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="3" target="17">
+          <mxGeometry width="100" height="100" relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Homework to StudentHomework -->
+        <mxCell id="33" value="" style="edgeStyle=entityRelationEdgeStyle;fontSize=12;html=1;endArrow=ERoneToMany;startArrow=ERmandOne;rounded=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="8" target="14">
+          <mxGeometry width="100" height="100" relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- StudentHomework to Submissions -->
+        <mxCell id="34" value="" style="edgeStyle=entityRelationEdgeStyle;fontSize=12;html=1;endArrow=ERoneToMany;startArrow=ERmandOne;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="15" target="23">
+          <mxGeometry width="100" height="100" relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- StudentHomework to AIInteractions -->
+        <mxCell id="35" value="" style="edgeStyle=entityRelationEdgeStyle;fontSize=12;html=1;endArrow=ERoneToMany;startArrow=ERmandOne;rounded=0;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="15" target="28">
+          <mxGeometry width="100" height="100" relative="1" as="geometry"/>
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile> 
